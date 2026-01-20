@@ -52,8 +52,8 @@ export function AnalysisPanel({
   };
 
   // Generate move explanation
-  const getMoveExplanation = (move: string | null, opening: Opening): string => {
-    if (!move) return 'Analyzing position...';
+  const getMoveExplanation = (move: string | null, opening: Opening, isPlayerTurn: boolean): string => {
+    if (!move) return isPlayerTurn ? 'Analyzing position...' : "Waiting for opponent's move";
     
     // Basic explanations based on move patterns
     const piece = move.charAt(0).toUpperCase();
@@ -191,7 +191,7 @@ export function AnalysisPanel({
           {bestMove || '—'}
         </motion.div>
         <p className="text-sm text-muted-foreground">
-          {getMoveExplanation(bestMove, opening)}
+          {getMoveExplanation(bestMove, opening, isPlayerTurn)}
         </p>
         <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
           <TrendingUp className="w-3 h-3" />
