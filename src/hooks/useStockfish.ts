@@ -112,16 +112,16 @@ export function useStockfish(targetDepth: number = 15) {
   }, []);
 
   const analyze = useCallback((fen: string, searchDepth?: number) => {
-    const depth = searchDepth || targetDepth;
+    const depth = searchDepth ?? targetDepth;
     
     if (!engineRef.current) {
       return;
     }
 
-    setResult(prev => ({
-      ...prev,
-      isThinking: true,
-    }));
+    setResult(prev => {
+      if (prev.isThinking) return prev; // Prevent unnecessary re-renders
+      return { ...prev, isThinking: true };
+    });
 
     if (!isReadyRef.current) {
       // Queue the analysis for when engine is ready
@@ -133,7 +133,7 @@ export function useStockfish(targetDepth: number = 15) {
     worker.postMessage('stop');
     worker.postMessage(`position fen ${fen}`);
     worker.postMessage(`go depth ${depth}`);
-  }, [targetDepth]);
+  }, []);
 
   const stop = useCallback(() => {
     if (engineRef.current) {

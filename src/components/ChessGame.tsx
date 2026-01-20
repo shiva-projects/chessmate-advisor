@@ -32,9 +32,10 @@ export function ChessGame({ playerColor, onNewGame }: ChessGameProps) {
   const currentTurn = game.turn();
 
   // Analyze position whenever it changes
+  const fen = game.fen();
   useEffect(() => {
-    analyze(game.fen(), analysisDepth);
-  }, [game.fen(), analysisDepth, analyze]);
+    analyze(fen, analysisDepth);
+  }, [fen, analysisDepth, analyze]);
 
   // Convert UCI move (e.g., "e2e4") to SAN (e.g., "e4")
   const uciToSan = useCallback((uciMove: string): string | null => {
