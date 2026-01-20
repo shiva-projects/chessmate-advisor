@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Chessboard } from 'react-chessboard';
-import type { Square as ChessboardSquare } from 'react-chessboard/dist/chessboard/types';
 import { Chess, Square } from 'chess.js';
 import { motion } from 'framer-motion';
 import { useStockfish } from '@/hooks/useStockfish';
@@ -72,8 +71,8 @@ export function ChessGame({ playerColor, onNewGame }: ChessGameProps) {
     }
   }, [bestMove, uciToSan]);
 
-  // Handle piece drop - v4 API uses separate parameters
-  const onDrop = useCallback((sourceSquare: ChessboardSquare, targetSquare: ChessboardSquare): boolean => {
+  // Handle piece drop
+  const onDrop = useCallback((sourceSquare: Square, targetSquare: Square): boolean => {
     try {
       const move = game.move({
         from: sourceSquare as Square,
