@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Chessboard } from 'react-chessboard';
+import type { Square as ChessboardSquare } from 'react-chessboard/dist/chessboard/types';
 import { Chess, Square } from 'chess.js';
 import { motion } from 'framer-motion';
 import { useStockfish } from '@/hooks/useStockfish';
@@ -71,14 +72,8 @@ export function ChessGame({ playerColor, onNewGame }: ChessGameProps) {
     }
   }, [bestMove, uciToSan]);
 
-  // Handle piece drop
-  const onDrop = useCallback(({ sourceSquare, targetSquare }: { 
-    piece: { isSparePiece: boolean; position: string; pieceType: string }; 
-    sourceSquare: string; 
-    targetSquare: string | null;
-  }): boolean => {
-    if (!targetSquare) return false;
-    
+  // Handle piece drop - v4 API uses separate parameters
+  const onDrop = useCallback((sourceSquare: ChessboardSquare, targetSquare: ChessboardSquare): boolean => {
     try {
       const move = game.move({
         from: sourceSquare as Square,
@@ -180,24 +175,22 @@ export function ChessGame({ playerColor, onNewGame }: ChessGameProps) {
               className="chess-board-container w-full max-w-[600px]"
             >
               <Chessboard
-                options={{
-                  position: game.fen(),
-                  onPieceDrop: onDrop,
-                  boardOrientation: boardOrientation,
-                  squareStyles: customSquareStyles,
-                  boardStyle: {
-                    borderRadius: '12px',
-                    boxShadow: '0 20px 60px -15px hsl(220, 30%, 5%, 0.8)',
-                  },
-                  darkSquareStyle: {
-                    backgroundColor: 'hsl(28, 25%, 45%)',
-                  },
-                  lightSquareStyle: {
-                    backgroundColor: 'hsl(35, 30%, 75%)',
-                  },
-                  allowDragging: true,
-                  animationDurationInMs: 200,
+                position={game.fen()}
+                onPieceDrop={onDrop}
+                boardOrientation={boardOrientation}
+                customSquareStyles={customSquareStyles}
+                customBoardStyle={{
+                  borderRadius: '12px',
+                  boxShadow: '0 20px 60px -15px hsl(220, 30%, 5%, 0.8)',
                 }}
+                customDarkSquareStyle={{
+                  backgroundColor: 'hsl(28, 25%, 45%)',
+                }}
+                customLightSquareStyle={{
+                  backgroundColor: 'hsl(35, 30%, 75%)',
+                }}
+                arePiecesDraggable={true}
+                animationDuration={200}
               />
             </motion.div>
 
